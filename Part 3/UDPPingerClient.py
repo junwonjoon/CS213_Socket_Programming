@@ -15,7 +15,7 @@ def RTT(serverName, serverPort, message):
     return str(end_time-start_time)
 
 # Hostname and IP Address for our client
-serverName = 'hostname'
+serverName = '172.30.250.218'
 serverPort = 12000
 
 # Creates a UDP Socket
