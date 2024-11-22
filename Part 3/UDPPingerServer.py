@@ -18,7 +18,8 @@ while True:
     
     # Generates a random number between 300 and 500 milliseconds. 
     # Here it is converted into seconds for ease of use. 
-    delay = random.randint(0.3, 0.5) 
+    delay_int = random.randint(300, 500) 
+    delay = delay_int / 1000
 
     # Receive the client packet along with the address it is coming from
     message, address = serverSocket.recvfrom(2046)
