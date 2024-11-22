@@ -1,34 +1,40 @@
 # UDPPingerClient.py;
 # Reference: Kurose and Ross textbook, 7th ed.
+# Author(s): Nicholas Harris
 
-import random
 from socket import *
+import time
+
+def RTT(serverName, serverPort, message): 
+    # Immediately before sending the message, the first timestamp is created.
+    start_time = time.time() 
+    clientSocket.sendto(message.encode(),(serverName, serverPort))
+    modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
+    # Immediately after receiving the message, the second timestamp is created. 
+    end_time = time.time() 
+    return str(end_time-start_time)
+
+# Hostname and IP Address for our client
+serverName = 'hostname'
+serverPort = 12000
 
 # Creates a UDP Socket
-serverSocket = socket(AF_INET, SOCK_DGRAM)
+clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-# Assigns an IP address and a port number to the socket
-serverSocket.bind(('', 12000)) 
+# Retrieves input from the user which will be sent to the UDP Server program
+message = input('Input lowercase sentence:')
 
-print("UDP Pinger Server is waiting for pings to pong!")
-while True:
-    # Generate random number in the range of 0 to 10
-    rand = random.randint(0, 10)
-    
-    # Generates a random number between 300 and 500 milliseconds. 
-    # Here it is converted into seconds for ease of use. 
-    delay = random.randint(0.3, 0.5) 
+for i in range(12): 
+    calculated_RTT = RTT(serverName, serverPort, message) 
+    RTT_in_ms = calculated_RTT * 1000
+    if calculated_RTT >= 1: 
+        print("The packet was lost.")     
+    else: 
+        print("The calculated RTT for Ping %d is "%(i,RTT_in_ms)) 
 
-    # Receive the client packet along with the address it is coming from
-    message, address = serverSocket.recvfrom(2046)
-    
-    # Capitalize the message from the client
-    message = message.upper()
-    
-    # If rand is less is than 4, we consider the packet lost and do not respond
-    if rand < 3:
-        continue
-    
-    # Otherwise, the server responds
-    time.sleep(delay)
-    serverSocket.sendto(message, address)
+
+# Prints the modified message
+print(modifiedMessage.decode())
+
+# Closes the socket
+clientSocket.close()
