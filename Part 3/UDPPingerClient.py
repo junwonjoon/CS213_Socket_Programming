@@ -21,10 +21,11 @@ serverPort = 12000
 # Creates a UDP Socket
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-# Retrieves input from the user which will be sent to the UDP Server program
-message = input('Input lowercase sentence:')
-
+# Sends 12 packets from the client to the server.
 for i in range(12): 
+    # Retrieves input from the user which will be sent to the UDP Server program
+    message = input('Input lowercase sentence for packet %d:'%(i))
+    
     calculated_RTT = RTT(serverName, serverPort, message) 
     RTT_in_ms = calculated_RTT * 1000
     if calculated_RTT >= 1: 
