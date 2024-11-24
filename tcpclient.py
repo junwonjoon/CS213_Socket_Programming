@@ -1,4 +1,4 @@
-MAX_MESSAGE_LENGTH = 500 #bytes 
+MAX_MESSAGE_LENGTH = 1024 #bytes #can handle 1 paragrah but not 2, however it depends on how long it is
 from socket import *
 serverName = 'localhost'
 serverPort = 12000
