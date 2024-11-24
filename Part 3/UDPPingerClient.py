@@ -25,14 +25,13 @@ clientSocket = socket(AF_INET, SOCK_DGRAM)
 for i in range(12): 
     # Retrieves input from the user which will be sent to the UDP Server program
     message = input('Input lowercase sentence for packet %d:'%(i))
+    clientSocket.settimeout(1)
     
-    calculated_RTT = RTT(serverName, serverPort, message) 
-    RTT_in_ms = calculated_RTT * 1000
-    if calculated_RTT >= 1: 
-        print("The packet was lost.")     
-    else: 
-        print("The calculated RTT for Ping %d is "%(i,RTT_in_ms)) 
-
+    try: 
+        calculated_RTT = RTT(serverName, serverPort, message) 
+        RTT_in_ms = calculated_RTT * 1000
+    except socket.timeout: 
+        print("Request timed out.")
 
 # Prints the modified message
 print(modifiedMessage.decode())
