@@ -5,6 +5,9 @@
 from socket import *
 import time
 
+# Declare global variables
+global lowest, highest, total
+
 def RTT(serverName, serverPort, message): 
     # Immediately before sending the message, the first timestamp is created.
     start_time = time.time() 
@@ -33,14 +36,14 @@ for i in range(n):
         cRTT = RTT(serverName, serverPort, message) 
         RTT = cRTT * 1000
         if count == 0: 
-            global lowest = RTT
-            global highest = RTT
+            lowest = RTT
+            highest = RTT
         else:     
             if RTT >= highest: 
                 highest = RTT
             if RTT <= lowest: 
                 lowest = RTT
-        global total += RTT
+        total += RTT
     
     except socket.timeout: 
         print("Request timed out.")
