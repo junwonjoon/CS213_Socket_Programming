@@ -21,20 +21,36 @@ serverPort = 12000
 # Creates a UDP Socket
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-# Sends 12 packets from the client to the server.
-for i in range(12): 
+# Sends n packets from the client to the server.
+n = int(input("Enter how many messages you would like to send (default is 12): "))
+for i in range(n): 
     # Retrieves input from the user which will be sent to the UDP Server program
     message = input('Input lowercase sentence for packet %d:'%(i))
     clientSocket.settimeout(1)
-    
+    count = 0
+   
     try: 
-        calculated_RTT = RTT(serverName, serverPort, message) 
-        RTT_in_ms = calculated_RTT * 1000
+        cRTT = RTT(serverName, serverPort, message) 
+        RTT = cRTT * 1000
+        if count == 0: 
+            global lowest = RTT
+            global highest = RTT
+        else:     
+            if RTT >= highest: 
+                highest = RTT
+            if RTT <= lowest: 
+                lowest = RTT
+        global total += RTT
+    
     except socket.timeout: 
         print("Request timed out.")
 
 # Prints the modified message
 print(modifiedMessage.decode())
+
+# Prints finalized RTT statistics
+print("RTT Statistics: ")    
+print("Minimum: %.3lf; Average: %.3lf; Maximum: %.3lf" %(lowest, (total/12), highest))    
 
 # Closes the socket
 clientSocket.close()
