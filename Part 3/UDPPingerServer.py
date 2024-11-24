@@ -8,6 +8,7 @@ from socket import *
 # Creates a UDP Socket
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 
+# Since the server is opening a socket on its own host, a blank IP address/hostname is acceptable. 
 # Assigns an IP address and a port number to the socket
 serverSocket.bind(('', 12000)) 
 
