@@ -1,4 +1,4 @@
-MAX_MESSAGE_LENGTH = 1024 #bytes 
+MAX_MESSAGE_LENGTH = 500 #bytes 
 from socket import *
 serverName = 'localhost'
 serverPort = 12000
