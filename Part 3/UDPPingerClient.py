@@ -58,6 +58,8 @@ def main():
         print("Minimum RTT: %d ms" %(lowest_rtt))
         print("Average RTT: %d ms" %(total_rtt/(n - timed_out)))
         print("Maximum RTT: %d ms" %(highest_rtt))
+        packet_success_rate = (n - timed_out)/n
+        print(f"The packet loss rate is {packet_success_rate:.0%}")
     else:
         print("\nNo successful connections were made.")
     
