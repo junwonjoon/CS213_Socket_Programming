@@ -50,6 +50,7 @@ def main():
             highest_rtt = current_rtt
 
         total_rtt += current_rtt
+        print("The RTT for packet %d is: %d ms" %(i+1, current_rtt))
 
     # Print RTT statistics
     if lowest_rtt is not None:  # Ensure at least one successful connection occurred
