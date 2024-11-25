@@ -1,59 +1,66 @@
 # UDPPingerClient.py;
 # Reference: Kurose and Ross textbook, 7th ed.
 # Author(s): Nicholas Harris
-
 from socket import *
 import time
 
-# Declare global variables
-global lowest, highest, total
+def calculate_rtt(client_socket, server_name, server_port, message):
+    start_time = time.time()
+    client_socket.sendto(message.encode(), (server_name, server_port))
+    client_socket.settimeout(1)
+    try:
+        modified_message, server_address = client_socket.recvfrom(2048)
+    except timeout:
+        print("Request timed out")
+        return None 
+    end_time = time.time()
+    return (end_time - start_time) * 1000, modified_message.decode()
 
-def RTT(serverName, serverPort, message): 
-    # Immediately before sending the message, the first timestamp is created.
-    start_time = time.time() 
-    clientSocket.sendto(message.encode(),(serverName, serverPort))
-    modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
-    # Immediately after receiving the message, the second timestamp is created. 
-    end_time = time.time() 
-    return str(end_time-start_time)
+def main():
+    server_name = ''  # Replace with the server's IP address
+    server_port = 12000
 
-# Hostname and IP Address for our client
-serverName = '' # Insert the server's IP address here (This must be accessible to the client) 
-serverPort = 12000
-
-# Creates a UDP Socket
-clientSocket = socket(AF_INET, SOCK_DGRAM)
-
-# Sends n packets from the client to the server.
-n = int(input("Enter how many messages you would like to send (default is 12): "))
-for i in range(n): 
-    # Retrieves input from the user which will be sent to the UDP Server program
-    message = input('Input lowercase sentence for packet %d:'%(i))
-    clientSocket.settimeout(1)
-    count = 0
-   
-    try: 
-        cRTT = RTT(serverName, serverPort, message) 
-        RTT = cRTT * 1000
-        if count == 0: 
-            lowest = RTT
-            highest = RTT
-        else:     
-            if RTT >= highest: 
-                highest = RTT
-            if RTT <= lowest: 
-                lowest = RTT
-        total += RTT
+    # Create a UDP socket
+    client_socket = socket(AF_INET, SOCK_DGRAM)
     
-    except socket.timeout: 
-        print("Request timed out.")
+    # Request the user for how many messages they would like to send
+    n = int(input("Enter how many messages you would like to send (typically 12): "))
 
-# Prints the modified message
-print(modifiedMessage.decode())
+    # Initialize variables for RTT statistics
+    total_rtt = 0.0
+    lowest_rtt = None
+    highest_rtt = None
+    timed_out = 0
 
-# Prints finalized RTT statistics
-print("RTT Statistics: ")    
-print("Minimum: %.3lf; Average: %.3lf; Maximum: %.3lf" %(lowest, (total/12), highest))    
+    for i in range(n):
+        message = input("Input lowercase sentence for packet %d: " %(i+1))
+        rtt_result = calculate_rtt(client_socket, server_name, server_port, message)
 
-# Closes the socket
-clientSocket.close()
+        if rtt_result is None:
+            timed_out += 1
+            continue 
+
+        current_rtt, modified_message = rtt_result
+        print(modified_message)
+
+        if lowest_rtt is None or current_rtt < lowest_rtt:
+            lowest_rtt = current_rtt
+
+        if highest_rtt is None or current_rtt > highest_rtt:
+            highest_rtt = current_rtt
+
+        total_rtt += current_rtt
+
+    # Print RTT statistics
+    if lowest_rtt is not None:  # Ensure at least one successful connection occurred
+        print("\nRTT Statistics:")
+        print("Minimum RTT: %d ms" %(lowest_rtt))
+        print("Average RTT: %d ms" %(total_rtt/(n - timed_out)))
+        print("Maximum RTT: %d ms" %(highest_rtt))
+    else:
+        print("\nNo successful connections were made.")
+    
+    client_socket.close()
+
+if __name__ == "__main__":
+    main()
