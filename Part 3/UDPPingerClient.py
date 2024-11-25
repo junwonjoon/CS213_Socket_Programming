@@ -5,6 +5,9 @@
 from socket import *
 import time
 
+# Declare global variables
+global lowest, highest, total
+
 def RTT(serverName, serverPort, message): 
     # Immediately before sending the message, the first timestamp is created.
     start_time = time.time() 
@@ -15,27 +18,42 @@ def RTT(serverName, serverPort, message):
     return str(end_time-start_time)
 
 # Hostname and IP Address for our client
-serverName = '172.30.250.218'
+serverName = '' # Insert the server's IP address here (This must be accessible to the client) 
 serverPort = 12000
 
 # Creates a UDP Socket
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-# Sends 12 packets from the client to the server.
-for i in range(12): 
+# Sends n packets from the client to the server.
+n = int(input("Enter how many messages you would like to send (default is 12): "))
+for i in range(n): 
     # Retrieves input from the user which will be sent to the UDP Server program
     message = input('Input lowercase sentence for packet %d:'%(i))
+    clientSocket.settimeout(1)
+    count = 0
+   
+    try: 
+        cRTT = RTT(serverName, serverPort, message) 
+        RTT = cRTT * 1000
+        if count == 0: 
+            lowest = RTT
+            highest = RTT
+        else:     
+            if RTT >= highest: 
+                highest = RTT
+            if RTT <= lowest: 
+                lowest = RTT
+        total += RTT
     
-    calculated_RTT = RTT(serverName, serverPort, message) 
-    RTT_in_ms = calculated_RTT * 1000
-    if calculated_RTT >= 1: 
-        print("The packet was lost.")     
-    else: 
-        print("The calculated RTT for Ping %d is "%(i,RTT_in_ms)) 
-
+    except socket.timeout: 
+        print("Request timed out.")
 
 # Prints the modified message
 print(modifiedMessage.decode())
+
+# Prints finalized RTT statistics
+print("RTT Statistics: ")    
+print("Minimum: %.3lf; Average: %.3lf; Maximum: %.3lf" %(lowest, (total/12), highest))    
 
 # Closes the socket
 clientSocket.close()

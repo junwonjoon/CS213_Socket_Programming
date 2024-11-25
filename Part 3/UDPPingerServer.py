@@ -8,6 +8,7 @@ from socket import *
 # Creates a UDP Socket
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 
+# Since the server is opening a socket on its own host, a blank IP address/hostname is acceptable. 
 # Assigns an IP address and a port number to the socket
 serverSocket.bind(('', 12000)) 
 
@@ -16,10 +17,8 @@ while True:
     # Generate random number in the range of 0 to 10
     rand = random.randint(0, 10)
     
-    # Generates a random number between 300 and 500 milliseconds. 
-    # Here it is converted into seconds for ease of use. 
-    delay_int = random.randint(300, 500) 
-    delay = delay_int / 1000
+    # Generates a random number between 0.300 and 0.500. This will be used as a random delay. 
+    delay = random.uniform(0.300, 0.500)
 
     # Receive the client packet along with the address it is coming from
     message, address = serverSocket.recvfrom(2046)
