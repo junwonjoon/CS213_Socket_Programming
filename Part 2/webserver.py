@@ -4,6 +4,7 @@
 # import socket module
 from socket import *
 import sys
+
 # Prepare a TCP server socket
 serverSocket = socket(AF_INET, SOCK_STREAM)
 
