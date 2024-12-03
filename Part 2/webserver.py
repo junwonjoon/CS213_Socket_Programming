@@ -10,7 +10,7 @@ serverSocket = socket(AF_INET, SOCK_STREAM)
 
 # FILL IN START
 serverPort = 8000
-serverHost = '172.30.200.115' #localhost also works
+serverHost = '192.168.1.187' #localhost also works
 serverSocket.bind((serverHost, serverPort))
 serverSocket.listen(5)
 # FILL IN END
